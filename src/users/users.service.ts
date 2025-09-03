@@ -57,6 +57,10 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
+  async findByEmailAndWorkspace(email: string, workspaceId: number): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email, workspaceId } });
+  }
+
   async findByRole(role: 'user' | 'admin'): Promise<User[]> {
     return this.userRepository.find({ where: { role } });
   }
