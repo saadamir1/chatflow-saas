@@ -1,7 +1,7 @@
 {
-  "name": "nestjs-graphql-realtime-foundation",
+  "name": "chatflow-saas",
   "version": "1.0.0",
-  "description": "NestJS GraphQL Foundation with Real-time WebSocket support",
+  "description": "ChatFlow - Team Collaboration SaaS Platform built with NestJS GraphQL",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
