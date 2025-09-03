@@ -15,6 +15,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { UploadModule } from './upload/upload.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { InvitationsModule } from './invitations/invitations.module';
 
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
@@ -115,6 +116,7 @@ import { WebSocketsModule } from './websockets/websockets.module';
     UploadModule,
     AnalyticsModule,
     WorkspacesModule,
+    InvitationsModule,
 
   ],
   controllers: [],
