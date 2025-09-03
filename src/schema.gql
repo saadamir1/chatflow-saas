@@ -2,9 +2,42 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type ActivityData {
+  action: String!
+  count: Int!
+}
+
+type AuditLog {
+  action: String!
+  createdAt: DateTime!
+  details: String
+  entity: String!
+  entityId: Int
+  id: ID!
+  ipAddress: String
+  userAgent: String
+  userId: Int
+}
+
 type AuthResponse {
   access_token: String!
   refresh_token: String!
+}
+
+type BillingSubscription {
+  amount: Float!
+  createdAt: DateTime!
+  currency: String!
+  currentPeriodEnd: DateTime
+  currentPeriodStart: DateTime
+  id: ID!
+  planType: PlanType!
+  status: SubscriptionStatus!
+  stripeCustomerId: String!
+  stripeSubscriptionId: String!
+  trialEnd: DateTime
+  updatedAt: DateTime!
+  workspace: Workspace!
 }
 
 input ChangePasswordInput {
@@ -28,6 +61,7 @@ type ChatRoom {
   name: String!
   participantIds: [Float!]!
   participants: [User!]!
+  workspace: Workspace!
 }
 
 input CitiesFilterInput {
@@ -43,6 +77,7 @@ type City {
   id: ID!
   imageUrl: String
   name: String!
+  workspace: Workspace!
 }
 
 input CreateCityInput {
@@ -60,9 +95,19 @@ input CreateNotificationDto {
   userId: Float!
 }
 
+input CreatePaymentIntentInput {
+  amount: Float!
+  description: String
+}
+
 input CreateRoomDto {
   name: String!
   participantIds: [Float!]!
+}
+
+input CreateSubscriptionInput {
+  paymentMethodId: String
+  planType: PlanType!
 }
 
 input CreateUserInput {
@@ -72,6 +117,21 @@ input CreateUserInput {
   lastName: String!
   password: String!
   role: String
+}
+
+input CreateWorkspaceInput {
+  description: String
+  name: String!
+}
+
+type DashboardStats {
+  recentActivity: [AuditLog!]!
+  recentUsers: [User!]!
+  totalCities: Int!
+  totalMessages: Int!
+  totalNotifications: Int!
+  totalRooms: Int!
+  totalUsers: Int!
 }
 
 """
@@ -87,6 +147,39 @@ input ForgotPasswordInput {
   email: String!
 }
 
+type Invitation {
+  createdAt: DateTime!
+  email: String!
+  expiresAt: DateTime!
+  id: ID!
+  invitedBy: User!
+  status: InvitationStatus!
+  token: String!
+  workspace: Workspace!
+}
+
+type InvitationResponse {
+  message: String!
+  success: Boolean!
+}
+
+enum InvitationStatus {
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  PENDING
+}
+
+input InviteUserInput {
+  email: String!
+  message: String
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 input LoginInput {
   email: String!
   password: String!
@@ -97,24 +190,33 @@ type MessageResponse {
 }
 
 type Mutation {
+  acceptInvitation(token: String!): InvitationResponse!
   bootstrapAdmin(bootstrapInput: CreateUserInput!): AuthResponse!
+  cancelSubscription: Boolean!
   changePassword(changePasswordInput: ChangePasswordInput!): String!
   createCity(createCityInput: CreateCityInput!): City!
   createNotification(createNotificationInput: CreateNotificationDto!): Notification!
+  createPaymentIntent(createPaymentIntentInput: CreatePaymentIntentInput!): PaymentIntentResponse!
   createRoom(createRoomInput: CreateRoomDto!): ChatRoom!
+  createSubscription(createSubscriptionInput: CreateSubscriptionInput!): SubscriptionResponse!
   createUser(createUserInput: CreateUserInput!): User!
+  createWorkspace(createWorkspaceInput: CreateWorkspaceInput!): Workspace!
   deleteCity(id: ID!): Boolean!
   deleteUser(id: ID!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): MessageResponse!
+  inviteUser(inviteUserInput: InviteUserInput!): InvitationResponse!
   login(loginInput: LoginInput!): AuthResponse!
   markNotificationRead(id: Float!): Notification!
   refreshToken(refreshTokenInput: RefreshTokenInput!): AuthResponse!
   register(registerInput: CreateUserInput!): MessageResponse!
+  removeWorkspace(id: Int!): Boolean!
+  resendEmailVerification(emailVerificationInput: EmailVerificationInput!): MessageResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
   sendEmailVerification(emailVerificationInput: EmailVerificationInput!): MessageResponse!
   sendMessage(sendMessageInput: SendMessageDto!): ChatMessage!
   updateCity(id: ID!, updateCityInput: UpdateCityInput!): City!
   updateProfile(updateProfileInput: UpdateProfileInput!): User!
+  updateWorkspace(id: Int!, updateWorkspaceInput: UpdateWorkspaceInput!): Workspace!
   verifyEmail(verifyEmailInput: VerifyEmailInput!): MessageResponse!
 }
 
@@ -135,16 +237,58 @@ type PaginatedCities {
   total: Int!
 }
 
+type Payment {
+  amount: Float!
+  createdAt: DateTime!
+  currency: String!
+  description: String
+  id: ID!
+  metadata: JSON
+  status: PaymentStatus!
+  stripePaymentIntentId: String!
+  workspace: Workspace!
+}
+
+type PaymentIntentResponse {
+  clientSecret: String!
+  paymentIntentId: String!
+}
+
+enum PaymentStatus {
+  CANCELED
+  FAILED
+  PENDING
+  REFUNDED
+  SUCCEEDED
+}
+
+enum PlanType {
+  ENTERPRISE
+  FREE
+  PRO
+}
+
 type Query {
+  allActivity: [ActivityData!]!
   cities(filter: CitiesFilterInput): PaginatedCities!
   city(id: ID!): City
+  dashboardStats: DashboardStats!
   me: User!
+  myActivity: [ActivityData!]!
+  myBillingSubscription: BillingSubscription!
   myNotifications: [Notification!]!
+  myPayments: [Payment!]!
   myRooms: [ChatRoom!]!
+  myWorkspace: Workspace!
   roomMessages(roomId: Float!): [ChatMessage!]!
   unreadCount: Float!
   user(id: ID!): User
+  userGrowth(days: Int! = 30): [UserGrowthData!]!
   users: [User!]!
+  workspace(id: Int!): Workspace!
+  workspaceBySlug(slug: String!): Workspace!
+  workspaceInvitations: [Invitation!]!
+  workspaces: [Workspace!]!
 }
 
 input RefreshTokenInput {
@@ -166,6 +310,20 @@ type Subscription {
   notificationAdded: Notification!
 }
 
+type SubscriptionResponse {
+  clientSecret: String
+  status: String!
+  subscriptionId: String!
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  TRIALING
+  UNPAID
+}
+
 input UpdateCityInput {
   active: Boolean
   country: String
@@ -180,6 +338,12 @@ input UpdateProfileInput {
   profilePicture: String
 }
 
+input UpdateWorkspaceInput {
+  description: String
+  logo: String
+  name: String
+}
+
 type User {
   email: String!
   firstName: String!
@@ -188,6 +352,12 @@ type User {
   lastName: String!
   profilePicture: String
   role: UserRole!
+  workspace: Workspace!
+}
+
+type UserGrowthData {
+  count: Int!
+  date: String!
 }
 
 enum UserRole {
@@ -197,4 +367,16 @@ enum UserRole {
 
 input VerifyEmailInput {
   token: String!
+}
+
+type Workspace {
+  active: Boolean!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  logo: String
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+  users: [User!]!
 }

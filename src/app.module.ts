@@ -16,7 +16,7 @@ import { UploadModule } from './upload/upload.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { InvitationsModule } from './invitations/invitations.module';
-
+import { BillingModule } from './billing/billing.module';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { AuditLog } from './common/entities/audit-log.entity';
@@ -117,7 +117,7 @@ import { WebSocketsModule } from './websockets/websockets.module';
     AnalyticsModule,
     WorkspacesModule,
     InvitationsModule,
-
+    BillingModule,
   ],
   controllers: [],
   providers: [
