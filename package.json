@@ -39,6 +39,7 @@
     "@nestjs/throttler": "^6.4.0",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.6",
+    "@types/stripe": "^8.0.416",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
@@ -47,9 +48,8 @@
     "crypto": "^1.0.1",
     "graphql": "^16.11.0",
     "graphql-subscriptions": "^3.0.0",
-
+    "graphql-type-json": "^0.3.2",
     "graphql-ws": "^6.0.6",
-
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
@@ -58,6 +58,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "socket.io": "^4.8.1",
+    "stripe": "^18.5.0",
     "subscriptions-transport-ws": "^0.11.0",
     "typeorm": "^0.3.25",
     "winston": "^3.17.0"
@@ -75,7 +76,6 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^24.0.6",
     "@types/nodemailer": "^6.4.17",
-
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
