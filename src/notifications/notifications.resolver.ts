@@ -17,6 +17,7 @@ export class NotificationsResolver {
   @Query(() => [Notification])
   @UseGuards(GraphQLJwtAuthGuard)
   async myNotifications(@CurrentUser() user: any): Promise<Notification[]> {
+    console.log('Getting notifications for user:', user);
     return this.notificationsService.findUserNotifications(user.userId);
   }
 
@@ -27,14 +28,15 @@ export class NotificationsResolver {
   }
 
   @Mutation(() => Notification)
-  @UseGuards(GraphQLJwtAuthGuard)
   async createNotification(
     @Args('createNotificationInput')
     createNotificationDto: CreateNotificationDto,
   ): Promise<Notification> {
+    console.log('Creating notification with data:', createNotificationDto);
     const notification = await this.notificationsService.create(
       createNotificationDto,
     );
+    console.log('Notification created:', notification);
     pubSub.publish('notificationAdded', { notificationAdded: notification });
     return notification;
   }
@@ -43,6 +45,13 @@ export class NotificationsResolver {
   @UseGuards(GraphQLJwtAuthGuard)
   async markNotificationRead(@Args('id') id: number): Promise<Notification> {
     return this.notificationsService.markAsRead(id);
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async deleteNotification(@Args('id') id: number): Promise<boolean> {
+    await this.notificationsService.remove(id);
+    return true;
   }
 
   @Subscription(() => Notification, {

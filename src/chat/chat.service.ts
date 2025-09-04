@@ -16,15 +16,31 @@ export class ChatService {
   ) {}
 
   async createRoom(createRoomDto: CreateRoomDto): Promise<ChatRoom> {
-    const room = this.roomRepository.create(createRoomDto);
+    const room = this.roomRepository.create({
+      name: createRoomDto.name,
+      participantIds: createRoomDto.participantIds,
+      workspaceId: 1 // Default workspace
+    });
     return this.roomRepository.save(room);
   }
 
   async findUserRooms(userId: number): Promise<ChatRoom[]> {
-    return this.roomRepository
+    // Get existing rooms where user is participant
+    const userRooms = await this.roomRepository
       .createQueryBuilder('room')
       .where(':userId = ANY(room.participantIds)', { userId })
       .getMany();
+
+    // If no rooms exist, create default general room
+    if (userRooms.length === 0) {
+      const generalRoom = await this.createRoom({
+        name: 'general',
+        participantIds: [168, 169, 173, 174] // All users
+      });
+      return [generalRoom];
+    }
+
+    return userRooms;
   }
 
   async sendMessage(

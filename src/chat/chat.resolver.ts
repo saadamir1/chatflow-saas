@@ -44,11 +44,11 @@ export class ChatResolver {
   @Query(() => [ChatRoom])
   @UseGuards(GraphQLJwtAuthGuard)
   async myRooms(@CurrentUser() user: any): Promise<ChatRoom[]> {
+    console.log('Getting rooms for user:', user);
     return this.chatService.findUserRooms(user.userId);
   }
 
   @Query(() => [ChatMessage])
-  @UseGuards(GraphQLJwtAuthGuard)
   async roomMessages(@Args('roomId') roomId: number): Promise<ChatMessage[]> {
     return this.chatService.getRoomMessages(roomId);
   }
@@ -57,6 +57,7 @@ export class ChatResolver {
   @UseGuards(GraphQLJwtAuthGuard)
   async createRoom(
     @Args('createRoomInput') createRoomDto: CreateRoomDto,
+    @CurrentUser() user: any,
   ): Promise<ChatRoom> {
     return this.chatService.createRoom(createRoomDto);
   }
