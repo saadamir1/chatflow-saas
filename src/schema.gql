@@ -202,6 +202,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): User!
   createWorkspace(createWorkspaceInput: CreateWorkspaceInput!): Workspace!
   deleteCity(id: ID!): Boolean!
+  deleteNotification(id: Float!): Boolean!
   deleteUser(id: ID!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): MessageResponse!
   inviteUser(inviteUserInput: InviteUserInput!): InvitationResponse!

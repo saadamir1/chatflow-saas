@@ -14,10 +14,14 @@ export class NotificationsService {
   async create(
     createNotificationDto: CreateNotificationDto,
   ): Promise<Notification> {
+    console.log('Service: Creating notification with:', createNotificationDto);
     const notification = this.notificationRepository.create(
       createNotificationDto,
     );
-    return this.notificationRepository.save(notification);
+    console.log('Service: Created entity:', notification);
+    const saved = await this.notificationRepository.save(notification);
+    console.log('Service: Saved notification:', saved);
+    return saved;
   }
 
   async findUserNotifications(userId: number): Promise<Notification[]> {
@@ -42,5 +46,9 @@ export class NotificationsService {
     return this.notificationRepository.count({
       where: { userId, read: false },
     });
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.notificationRepository.delete(id);
   }
 }
