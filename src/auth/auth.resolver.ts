@@ -22,12 +22,14 @@ import {
   MessageResponse,
 } from './dto/graphql-inputs';
 import { CreateUserInput } from '../users/dto/graphql-inputs';
+import { WorkspacesService } from '../workspaces/workspaces.service';
 
 @Resolver()
 export class AuthResolver {
   constructor(
     private authService: AuthService,
     private usersService: UsersService,
+    private workspacesService: WorkspacesService,
   ) {}
 
   @Mutation(() => AuthResponse)
@@ -54,6 +56,18 @@ export class AuthResolver {
     }
 
     const user = await this.usersService.create(registerInput);
+    
+    // Auto-create default workspace for user
+    try {
+      await this.workspacesService.create({
+        name: `${registerInput.firstName}'s Workspace`,
+        description: 'Default workspace'
+      });
+    } catch (error) {
+      // Ignore workspace creation errors for now
+      console.log('Workspace creation failed:', error.message);
+    }
+    
     await this.authService.sendEmailVerification(registerInput.email);
 
     return {

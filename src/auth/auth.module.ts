@@ -5,6 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
+import { WorkspacesModule } from '../workspaces/workspaces.module';
 
 import { AuthResolver } from './auth.resolver';
 import { EmailService } from '../common/services/email.service';
@@ -14,6 +15,7 @@ import { AuditLog } from '../common/entities/audit-log.entity';
 @Module({
   imports: [
     UsersModule,
+    WorkspacesModule,
     PassportModule,
     TypeOrmModule.forFeature([AuditLog]),
     JwtModule.register({
