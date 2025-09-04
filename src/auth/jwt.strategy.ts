@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       // Reject expired tokens
       ignoreExpiration: false,
       // Secret key used to verify JWT
-      secretOrKey: configService.get<string>('JWT_SECRET'),
+      secretOrKey: configService.get<string>('JWT_SECRET') || 'jwt-secret-key',
     });
 
     // Token extraction and verification logic is handled by Passport (via super constructor)
@@ -22,7 +22,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // Called automatically after token is successfully verified
   // Returns the user info to be attached to request.user
   async validate(payload: any) {
-    return { userId: payload.sub, email: payload.email, role: payload.role };
+    const user = { 
+      userId: payload.sub, 
+      email: payload.email, 
+      role: payload.role,
+      id: payload.sub
+    };
+    console.log('JWT validated user:', user);
+    return user;
   }
 }
 
