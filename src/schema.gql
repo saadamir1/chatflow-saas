@@ -61,6 +61,7 @@ type ChatRoom {
   name: String!
   participantIds: [Float!]!
   participants: [User!]!
+  type: RoomType!
   workspace: Workspace!
 }
 
@@ -103,6 +104,7 @@ input CreatePaymentIntentInput {
 input CreateRoomDto {
   name: String!
   participantIds: [Float!]!
+  type: RoomType
 }
 
 input CreateSubscriptionInput {
@@ -195,6 +197,7 @@ type Mutation {
   cancelSubscription: Boolean!
   changePassword(changePasswordInput: ChangePasswordInput!): String!
   createCity(createCityInput: CreateCityInput!): City!
+  createDirectMessage(otherUserId: Float!): ChatRoom!
   createNotification(createNotificationInput: CreateNotificationDto!): Notification!
   createPaymentIntent(createPaymentIntentInput: CreatePaymentIntentInput!): PaymentIntentResponse!
   createRoom(createRoomInput: CreateRoomDto!): ChatRoom!
@@ -277,6 +280,8 @@ type Query {
   me: User!
   myActivity: [ActivityData!]!
   myBillingSubscription: BillingSubscription!
+  myChannels: [ChatRoom!]!
+  myDirectMessages: [ChatRoom!]!
   myNotifications: [Notification!]!
   myPayments: [Payment!]!
   myRooms: [ChatRoom!]!
@@ -299,6 +304,11 @@ input RefreshTokenInput {
 input ResetPasswordInput {
   newPassword: String!
   token: String!
+}
+
+enum RoomType {
+  CHANNEL
+  DIRECT_MESSAGE
 }
 
 input SendMessageDto {
