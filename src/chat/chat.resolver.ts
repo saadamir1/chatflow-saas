@@ -48,9 +48,37 @@ export class ChatResolver {
     return this.chatService.findUserRooms(user.userId);
   }
 
+  @Query(() => [ChatRoom])
+  @UseGuards(GraphQLJwtAuthGuard)
+  async myChannels(@CurrentUser() user: any): Promise<ChatRoom[]> {
+    return this.chatService.findUserChannels(user.userId);
+  }
+
+  @Query(() => [ChatRoom])
+  @UseGuards(GraphQLJwtAuthGuard)
+  async myDirectMessages(@CurrentUser() user: any): Promise<ChatRoom[]> {
+    return this.chatService.findUserDirectMessages(user.userId);
+  }
+
+  @Mutation(() => ChatRoom)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async createDirectMessage(
+    @Args('otherUserId') otherUserId: number,
+    @CurrentUser() user: any,
+  ): Promise<ChatRoom> {
+    return this.chatService.findOrCreateDirectMessage(user.userId, otherUserId);
+  }
+
   @Query(() => [ChatMessage])
-  async roomMessages(@Args('roomId') roomId: number): Promise<ChatMessage[]> {
-    return this.chatService.getRoomMessages(roomId);
+  @UseGuards(GraphQLJwtAuthGuard)
+  async roomMessages(
+    @Args('roomId') roomId: number,
+    @CurrentUser() user: any,
+  ): Promise<ChatMessage[]> {
+    console.log(`Getting messages for room ${roomId} by user ${user.userId}`);
+    const messages = await this.chatService.getRoomMessages(roomId);
+    console.log(`Found ${messages.length} messages for room ${roomId}`);
+    return messages;
   }
 
   @Mutation(() => ChatRoom)

@@ -7,9 +7,18 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { ChatMessage } from './chat-message.entity';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
+
+export enum RoomType {
+  CHANNEL = 'CHANNEL',
+  DIRECT_MESSAGE = 'DIRECT_MESSAGE'
+}
+
+registerEnumType(RoomType, {
+  name: 'RoomType',
+});
 
 @Entity('chat_rooms')
 @ObjectType()
@@ -25,6 +34,14 @@ export class ChatRoom {
   @Column('int', { array: true })
   @Field(() => [Number])
   participantIds: number[];
+
+  @Column({
+    type: 'enum',
+    enum: RoomType,
+    default: RoomType.CHANNEL
+  })
+  @Field(() => RoomType)
+  type: RoomType;
 
   @CreateDateColumn()
   @Field()
