@@ -18,6 +18,8 @@ import { GraphQLJwtAuthGuard } from '../auth/graphql-jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
+import { RequestJoinInput, ApproveJoinInput, RejectJoinInput, DeleteRoomsInput, JoinRequestPayload } from './dto/join-requests.dto';
+import { ChannelJoinRequest } from './entities/channel-join-request.entity';
 
 const pubSub = new PubSub();
 
@@ -56,6 +58,12 @@ export class ChatResolver {
 
   @Query(() => [ChatRoom])
   @UseGuards(GraphQLJwtAuthGuard)
+  async discoverChannels(@CurrentUser() user: any): Promise<ChatRoom[]> {
+    return this.chatService.discoverChannels(user.userId);
+  }
+
+  @Query(() => [ChatRoom])
+  @UseGuards(GraphQLJwtAuthGuard)
   async myDirectMessages(@CurrentUser() user: any): Promise<ChatRoom[]> {
     return this.chatService.findUserDirectMessages(user.userId);
   }
@@ -87,7 +95,7 @@ export class ChatResolver {
     @Args('createRoomInput') createRoomDto: CreateRoomDto,
     @CurrentUser() user: any,
   ): Promise<ChatRoom> {
-    return this.chatService.createRoom(createRoomDto);
+    return this.chatService.createRoom({ ...createRoomDto, adminId: user.userId });
   }
 
   @Mutation(() => ChatMessage)
@@ -112,5 +120,42 @@ export class ChatResolver {
   })
   messageAdded() {
     return pubSub.asyncIterableIterator('messageAdded');
+  }
+
+  @Mutation(() => JoinRequestPayload)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async requestToJoin(
+    @Args('requestJoinInput') input: RequestJoinInput,
+    @CurrentUser() user: any,
+  ): Promise<ChannelJoinRequest> {
+    return this.chatService.requestToJoin(input.roomId, user.userId);
+  }
+
+  @Mutation(() => JoinRequestPayload)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async approveJoin(
+    @Args('approveJoinInput') input: ApproveJoinInput,
+    @CurrentUser() user: any,
+  ): Promise<ChannelJoinRequest> {
+    return this.chatService.approveJoin(input.requestId, user.userId);
+  }
+
+  @Mutation(() => JoinRequestPayload)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async rejectJoin(
+    @Args('rejectJoinInput') input: RejectJoinInput,
+    @CurrentUser() user: any,
+  ): Promise<ChannelJoinRequest> {
+    return this.chatService.rejectJoin(input.requestId, user.userId);
+  }
+
+  @Mutation(() => Number)
+  @UseGuards(GraphQLJwtAuthGuard)
+  async deleteRooms(
+    @Args('deleteRoomsInput') input: DeleteRoomsInput,
+    @CurrentUser() user: any,
+  ): Promise<number> {
+    // Optional: add admin-only policy later
+    return this.chatService.deleteRooms(input.roomIds);
   }
 }
