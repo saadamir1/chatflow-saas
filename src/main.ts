@@ -39,8 +39,9 @@ async function bootstrap() {
 
   // GraphQL will be available at /graphql
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log('GraphQL API running on http://localhost:3000');
-  console.log('GraphQL Playground available at http://localhost:3000/graphql');
+  const port = process.env.PORT ? Number(process.env.PORT) : 3001;
+  await app.listen(port);
+  console.log(`GraphQL API running on http://localhost:${port}`);
+  console.log(`GraphQL Playground available at http://localhost:${port}/graphql`);
 }
 bootstrap();
