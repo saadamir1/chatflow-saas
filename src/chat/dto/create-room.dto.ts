@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsString, IsArray, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsArray, IsOptional, IsEnum, IsBoolean } from 'class-validator';
 import { RoomType } from '../entities/chat-room.entity';
 
 @InputType()
@@ -16,4 +16,14 @@ export class CreateRoomDto {
   @IsOptional()
   @IsEnum(RoomType)
   type?: RoomType;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isPrivate?: boolean;
 }
