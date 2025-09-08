@@ -7,6 +7,10 @@ type ActivityData {
   count: Int!
 }
 
+input ApproveJoinInput {
+  requestId: Int!
+}
+
 type AuditLog {
   action: String!
   createdAt: DateTime!
@@ -55,8 +59,12 @@ type ChatMessage {
 }
 
 type ChatRoom {
+  admin: User
+  adminId: Float
   createdAt: DateTime!
+  description: String
   id: ID!
+  isPrivate: Boolean!
   messages: [ChatMessage!]!
   name: String!
   participantIds: [Float!]!
@@ -91,6 +99,8 @@ input CreateCityInput {
 
 input CreateNotificationDto {
   message: String!
+  referenceId: Float
+  referenceType: String
   title: String!
   type: String!
   userId: Float!
@@ -102,6 +112,8 @@ input CreatePaymentIntentInput {
 }
 
 input CreateRoomDto {
+  description: String
+  isPrivate: Boolean
   name: String!
   participantIds: [Float!]!
   type: RoomType
@@ -140,6 +152,10 @@ type DashboardStats {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input DeleteRoomsInput {
+  roomIds: [Int!]!
+}
 
 input EmailVerificationInput {
   email: String!
@@ -182,6 +198,20 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type JoinRequestPayload {
+  createdAt: DateTime!
+  id: ID!
+  requesterId: Float!
+  roomId: Float!
+  status: JoinRequestStatus!
+}
+
+enum JoinRequestStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -193,6 +223,7 @@ type MessageResponse {
 
 type Mutation {
   acceptInvitation(token: String!): InvitationResponse!
+  approveJoin(approveJoinInput: ApproveJoinInput!): JoinRequestPayload!
   bootstrapAdmin(bootstrapInput: CreateUserInput!): AuthResponse!
   cancelSubscription: Boolean!
   changePassword(changePasswordInput: ChangePasswordInput!): String!
@@ -206,6 +237,7 @@ type Mutation {
   createWorkspace(createWorkspaceInput: CreateWorkspaceInput!): Workspace!
   deleteCity(id: ID!): Boolean!
   deleteNotification(id: Float!): Boolean!
+  deleteRooms(deleteRoomsInput: DeleteRoomsInput!): Float!
   deleteUser(id: ID!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): MessageResponse!
   inviteUser(inviteUserInput: InviteUserInput!): InvitationResponse!
@@ -213,7 +245,9 @@ type Mutation {
   markNotificationRead(id: Float!): Notification!
   refreshToken(refreshTokenInput: RefreshTokenInput!): AuthResponse!
   register(registerInput: CreateUserInput!): MessageResponse!
+  rejectJoin(rejectJoinInput: RejectJoinInput!): JoinRequestPayload!
   removeWorkspace(id: Int!): Boolean!
+  requestToJoin(requestJoinInput: RequestJoinInput!): JoinRequestPayload!
   resendEmailVerification(emailVerificationInput: EmailVerificationInput!): MessageResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
   sendEmailVerification(emailVerificationInput: EmailVerificationInput!): MessageResponse!
@@ -229,6 +263,8 @@ type Notification {
   id: ID!
   message: String!
   read: Boolean!
+  referenceId: Float
+  referenceType: String
   title: String!
   type: String!
   userId: Float!
@@ -277,6 +313,7 @@ type Query {
   cities(filter: CitiesFilterInput): PaginatedCities!
   city(id: ID!): City
   dashboardStats: DashboardStats!
+  discoverChannels: [ChatRoom!]!
   me: User!
   myActivity: [ActivityData!]!
   myBillingSubscription: BillingSubscription!
@@ -299,6 +336,14 @@ type Query {
 
 input RefreshTokenInput {
   refreshToken: String!
+}
+
+input RejectJoinInput {
+  requestId: Int!
+}
+
+input RequestJoinInput {
+  roomId: Int!
 }
 
 input ResetPasswordInput {
