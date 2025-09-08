@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { ChatMessage } from './chat-message.entity';
+import { User } from '../../users/entities/user.entity';
 import { Workspace } from '../../workspaces/entities/workspace.entity';
 
 export enum RoomType {
@@ -31,6 +32,10 @@ export class ChatRoom {
   @Field()
   name: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  description?: string;
+
   @Column('int', { array: true })
   @Field(() => [Number])
   participantIds: number[];
@@ -42,6 +47,19 @@ export class ChatRoom {
   })
   @Field(() => RoomType)
   type: RoomType;
+
+  @Column({ default: false })
+  @Field()
+  isPrivate: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => Number, { nullable: true })
+  adminId?: number;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'adminId' })
+  @Field(() => User, { nullable: true })
+  admin?: User;
 
   @CreateDateColumn()
   @Field()
