@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateNotificationDto {
@@ -18,4 +18,14 @@ export class CreateNotificationDto {
   @Field()
   @IsString()
   message: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  referenceId?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  referenceType?: string;
 }

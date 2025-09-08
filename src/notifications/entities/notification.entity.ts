@@ -32,6 +32,14 @@ export class Notification {
   @Field()
   message: string;
 
+  @Column({ nullable: true }) 
+  @Field({ nullable: true })
+  referenceId?: number;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  referenceType?: string;
+
   @Column({ default: false })
   @Field()
   read: boolean;
